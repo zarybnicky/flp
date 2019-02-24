@@ -7,7 +7,6 @@
 {-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE TypeOperators #-}
-{-# LANGUAGE ViewPatterns #-}
 
 {-# OPTIONS_GHC -fplugin=GHC.TypeLits.Normalise #-}
 {-# OPTIONS_GHC -Wno-redundant-constraints #-}
@@ -15,11 +14,16 @@
 module Lib
   ( fun
   , Heap(..)
+  , SomeHeap(..)
   , singleton
   , merge
   , insert
+  , insertSome
+  , popSome
+  , toHeap
   ) where
 
+import Data.List (foldl')
 import Data.Type.Equality
 import Data.Void
 import GHC.TypeLits
@@ -55,14 +59,6 @@ data Heap (n :: Nat) a where
 
 deriving instance Show (Offset m n)
 deriving instance Show a => Show (Heap n a)
-
--- newtype SomeHeap a where
---   SomeHeap :: (forall n. Heap n a) -> SomeHeap a
-
--- instance Ord a => Semigroup (SomeHeap a) where
---   (<>) :: forall a (m :: Nat) (n :: Nat). SomeHeap a -> SomeHeap a -> SomeHeap a
---   (SomeHeap (a :: Heap m a)) <> (SomeHeap (b :: Heap n a)) =
---     SomeHeap (mergeEven a b)
 
 singleton :: a -> Heap 1 a
 singleton x = Node Even Empty x Empty
@@ -100,7 +96,8 @@ mergeLeaning l@(Node lo ll lx lr) r@(Node _ rl ly rr)
 mergeLeaning h Empty = h
 mergeLeaning Empty h = h
 
-extract :: Ord a => Heap (1 + n) a -> (a, Heap n a)
+-- We need to do more case analysis to convince GHC that our shape is correct
+extract :: Heap (1 + n) a -> (a, Heap n a)
 extract Empty = absurd undefined -- Empty != Heap (1 + n) a
 extract (Node Even l y r) = case l of
   Empty -> (y, Empty)
@@ -120,23 +117,26 @@ replaceMin a (Node o l@(Node _ _ lx _) _ r@(Node _ _ rx _))
   | rx <= lx = Node o (replaceMin a l) lx r
   | otherwise = Node o l rx (replaceMin a r)
 
--- toHeap :: Foldable f => f a -> Heap a
--- toHeap = foldMap (uncurry singleton)
 
--- insert :: Natural -> a -> Heap a -> Heap a
--- insert p = (<>) . singleton p
+data SomeHeap a where
+  SomeHeap :: Heap n a -> SomeHeap a
 
--- pop :: Heap a -> Maybe (Natural, a, Heap a)
--- pop Empty = Nothing
--- pop (Node p _ x ys zs) = Just (p, x, ys <> zs)
+insertSome :: Ord a => a -> SomeHeap a -> SomeHeap a
+insertSome x (SomeHeap h) = SomeHeap (insert x h)
 
--- peek :: Heap a -> Maybe (Natural, a)
--- peek = fmap (\(p, x, _) -> (p, x)) . pop
+popSome :: SomeHeap a -> Maybe (a, SomeHeap a)
+popSome (SomeHeap Empty) = Nothing
+popSome (SomeHeap h@Node {}) =
+  let (x, h') = extract h
+   in Just (x, SomeHeap h')
 
--- instance Foldable Heap where
---   foldMap f = go mempty
---     where
---       go m h =
---         case pop h of
---           Nothing -> m
---           Just (_, x, h') -> go (m <> f x) h'
+toHeap :: (Foldable f, Ord a) => f a -> SomeHeap a
+toHeap = foldl' (\(SomeHeap h) x -> SomeHeap (insert x h)) (SomeHeap Empty)
+
+instance Foldable SomeHeap where
+  foldMap f = go mempty
+    where
+      go m h =
+        case popSome h of
+          Nothing -> m
+          Just (x, h') -> go (m <> f x) h'
