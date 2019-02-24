@@ -5,9 +5,11 @@
 {-# LANGUAGE RankNTypes #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE StandaloneDeriving #-}
+{-# LANGUAGE TypeApplications #-}
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE TypeOperators #-}
 
+{-# OPTIONS_GHC -fplugin=GHC.TypeLits.KnownNat.Solver #-}
 {-# OPTIONS_GHC -fplugin=GHC.TypeLits.Normalise #-}
 {-# OPTIONS_GHC -Wno-redundant-constraints #-}
 
@@ -16,13 +18,17 @@ module Lib
   , Heap(..)
   , SomeHeap(..)
   , singleton
-  , merge
   , insert
+  , merge
+  , pop
   , insertSome
+  , extractSome
   , popSome
+  , sizeSome
   , toHeap
   ) where
 
+import Data.Proxy (Proxy(Proxy))
 import Data.List (foldl')
 import Data.Type.Equality
 import Data.Void
@@ -73,6 +79,10 @@ insert x (Node o l y r)
       Leaning -> Even
       Even -> Leaning
 
+pop :: Ord a => Heap (1 + n) a -> (a, Heap n a)
+pop Empty = absurd undefined -- Empty != Heap (1 + n) a
+pop (Node o l y r) = (y, merge o l r)
+
 merge :: Ord a => Offset m n -> Heap m a -> Heap n a -> Heap (m + n) a
 merge Even = mergeEven
 merge Leaning = mergeLeaning
@@ -119,24 +129,37 @@ replaceMin a (Node o l@(Node _ _ lx _) _ r@(Node _ _ rx _))
 
 
 data SomeHeap a where
-  SomeHeap :: Heap n a -> SomeHeap a
+  SomeHeap :: KnownNat n => Heap n a -> SomeHeap a
 
 insertSome :: Ord a => a -> SomeHeap a -> SomeHeap a
 insertSome x (SomeHeap h) = SomeHeap (insert x h)
 
-popSome :: SomeHeap a -> Maybe (a, SomeHeap a)
-popSome (SomeHeap Empty) = Nothing
-popSome (SomeHeap h@Node {}) =
+extractSome :: SomeHeap a -> Maybe (a, SomeHeap a)
+extractSome (SomeHeap Empty) = Nothing
+extractSome (SomeHeap h@Node {}) =
   let (x, h') = extract h
    in Just (x, SomeHeap h')
 
+popSome :: Ord a => SomeHeap a -> Maybe (a, SomeHeap a)
+popSome (SomeHeap Empty) = Nothing
+popSome (SomeHeap h@Node {}) =
+  let (x, h') = pop h
+   in Just (x, SomeHeap h')
+
+sizeSome :: SomeHeap a -> Integer
+sizeSome (SomeHeap (_ :: Heap n a)) = natVal (Proxy @n)
+
 toHeap :: (Foldable f, Ord a) => f a -> SomeHeap a
 toHeap = foldl' (\(SomeHeap h) x -> SomeHeap (insert x h)) (SomeHeap Empty)
+
+instance Foldable (Heap n) where
+  foldMap _ Empty = mempty
+  foldMap f (Node _ l x r) = foldMap f l <> f x <> foldMap f r
 
 instance Foldable SomeHeap where
   foldMap f = go mempty
     where
       go m h =
-        case popSome h of
+        case extractSome h of
           Nothing -> m
           Just (x, h') -> go (m <> f x) h'

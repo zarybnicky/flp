@@ -23,6 +23,7 @@ library
   hs-source-dirs:      src
   exposed-modules:     Lib
   build-depends:       base >=4.11 && <4.12
+                     , ghc-typelits-knownnat
                      , ghc-typelits-natnormalise
 
 executable flp-binary-heap
