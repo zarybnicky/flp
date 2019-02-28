@@ -26,13 +26,17 @@ module Lib
   , popSome
   , sizeSome
   , toHeap
+  , prettyShow
+  , prettyPrint
   ) where
 
 import Data.Proxy (Proxy(Proxy))
 import Data.List (foldl')
-import Data.Type.Equality
-import Data.Void
-import GHC.TypeLits
+import Data.Type.Equality ((:~:)(Refl))
+import Data.Void (absurd)
+import GHC.TypeLits (type (+), KnownNat, Nat, natVal)
+import Text.PrettyPrint.HughesPJClass
+  (Pretty, (<+>), ($$), nest, pPrint, prettyShow, text)
 
 fun :: IO ()
 fun = putStrLn "Hello World!"
@@ -163,3 +167,15 @@ instance Foldable SomeHeap where
         case extractSome h of
           Nothing -> m
           Just (x, h') -> go (m <> f x) h'
+
+instance Pretty (Offset m n) where
+  pPrint = text . show
+
+instance Pretty a => Pretty (Heap n a) where
+  pPrint Empty = text "Empty"
+  pPrint (Node t l x r) =
+      (text "Node" <+> pPrint t) $$
+      nest 2 (pPrint l $$ pPrint x $$ pPrint r)
+
+prettyPrint :: Pretty a => a -> IO ()
+prettyPrint = putStrLn . prettyShow

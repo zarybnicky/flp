@@ -1,1 +1,2 @@
-(("binary-heap" . ((nil . ((dante-target . "binary-heap"))))))
+(("binary-heap" . ((nil . ((dante-target . "binary-heap")))))
+ ("practicals" . ((nil . ((dante-target . "practicals"))))))

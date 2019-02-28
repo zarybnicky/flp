@@ -1,5 +1,5 @@
 cabal-version:       2.2
-name:                binary-heap
+name:                practicals
 version:             0.1.0.0
 license:             BSD-3-Clause
 author:              Jakub Zárybnický
@@ -23,14 +23,12 @@ library
   hs-source-dirs:      src
   exposed-modules:     Lib
   build-depends:       base >=4.11 && <4.12
-                     , ghc-typelits-knownnat
-                     , ghc-typelits-natnormalise
-                     , pretty
-                     , pretty-show
+--                      , ghc-typelits-knownnat
+--                      , ghc-typelits-natnormalise
 
-executable flp-binary-heap
-  import: ghc-opts
-  hs-source-dirs:      app
-  main-is:             Main.hs
-  build-depends:       base >=4.11 && <4.12
-                     , binary-heap
+-- executable flp-binary-heap
+--   import: ghc-opts
+--   hs-source-dirs:      app
+--   main-is:             Main.hs
+--   build-depends:       base >=4.11 && <4.12
+--                      , practicals
