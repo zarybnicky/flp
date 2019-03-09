@@ -174,8 +174,8 @@ instance Pretty (Offset m n) where
 instance Pretty a => Pretty (Heap n a) where
   pPrint Empty = text "Empty"
   pPrint (Node t l x r) =
-      (text "Node" <+> pPrint t) $$
-      nest 2 (pPrint l $$ pPrint x $$ pPrint r)
+    (text "Node" <+> pPrint t <+> pPrint x) $$
+    nest 2 (pPrint l $$ pPrint r)
 
 prettyPrint :: Pretty a => a -> IO ()
 prettyPrint = putStrLn . prettyShow
