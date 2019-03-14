@@ -11,6 +11,16 @@ cabal-version:       >=1.10
 
 executable turing
   main-is:             TuringMain.hs
+  ghc-options:        -Wall
+                      -Wcompat
+                      -Wincomplete-uni-patterns
+                      -Wincomplete-record-updates
+                      -Wredundant-constraints
+                      -Wmonomorphism-restriction
+                      -fwarn-tabs
+                      -O2
+                      -fdiagnostics-color=never
+
   other-modules:       TuringData
                        TuringFuncs
                        TuringParse

@@ -1,7 +1,8 @@
--- Textová analýza Turingova stroje na vstupu
+{-# LANGUAGE RecordWildCards #-}
+
+-- | Textová analýza Turingova stroje na vstupu
 -- Využívá se knihovny Parsec
 
-{-# LANGUAGE RecordWildCards #-}
 module TuringParse (parseTM)  where
 
 import Control.Applicative ((<$>), (<*>), (<$), (<*), (<|>))
@@ -17,53 +18,43 @@ import TuringData
 
 -- Převod TM z textu do vnitřní reprezentace
 -- Funkce 'parse' aplikuje parser na řetězec a 'left show' převede chybový výsledek
--- na chybovou hlášku z typu 'Err TMachine'
-parseTM :: String -> Err TMachine
+-- na chybovou hlášku z typu 'Either String TMachine'
+parseTM :: String -> Either String TMachine
 parseTM = validate <=< left show . parse tmParser ""
-
 
 -- Analýza celého TM
 tmParser :: Parser TMachine
-tmParser =
-  TM <$> stateListP <* newline <*> alphabetP <* newline <*> stateP <* newline <*>
-  stateP <*
-  newline <*>
-  transitionsP
-
-
--- seznam stavů
-stateListP :: Parser [TState]
-stateListP = sepBy1 stateP comma
+tmParser = do
+  states <- sepBy1 stateP (char ',')
+  newline
+  alphabet <- many1 symbP
+  newline
+  start <- stateP
+  newline
+  end <- stateP
+  newline
+  transRules <- endBy transP newline
+  pure TM {..}
 
 stateP :: Parser TState
 stateP = many1 alphaNum
 
-
--- abeceda
-alphabetP :: Parser [TSymbol]
-alphabetP = many1 symbP
-
 symbP :: Parser TSymbol  -- cokoliv, co není mezi vyjmenovanými znaky
 symbP = satisfy (`notElem` " ,<>\n\t")
 
-
--- seznam pravidel, na každém řádku jedno
-transitionsP :: Parser [Transition]
-transitionsP = endBy transP newline
-
 transP :: Parser Transition
-transP =
-  Trans <$> stateP <* comma <*> symbP <* comma <*> stateP <* comma <*> actP
-  where
-    actP = ALeft <$ char '<' <|> ARight <$ char '>' <|> AWrite <$> symbP
-
-
--- oddělovač
-comma :: Parser Char
-comma = char ','
+transP = do
+  fromState <- stateP
+  char ','
+  fromSym <- symbP
+  char ','
+  toState <- stateP
+  char ','
+  toAction <- ALeft <$ char '<' <|> ARight <$ char '>' <|> AWrite <$> symbP
+  pure Trans {..}
 
 -- Validační funkce: všechny stavy musí být v seznamu stavů a všechny symboly v abecedě
-validate :: TMachine -> Err TMachine
+validate :: TMachine -> Either String TMachine
 validate tm@TM {..} =
   if allOK
     then Right tm
