@@ -5,12 +5,10 @@
 
 module TuringParse (parseTM)  where
 
-import Control.Applicative ((<$>), (<*>), (<$), (<*), (<|>))
+import Control.Applicative ((<|>))
 import Control.Arrow (left)
 import Control.Monad ((<=<))
-import Data.Bool (bool)
-import Text.Parsec (Parsec, ParseError, parse,
-        newline, alphaNum, string, char, satisfy, sepBy1, endBy, many1)
+import Text.Parsec (alphaNum, char, endBy, many1, newline, parse, satisfy, sepBy1)
 import Text.Parsec.String (Parser)
 
 import TuringData
@@ -26,13 +24,13 @@ parseTM = validate <=< left show . parse tmParser ""
 tmParser :: Parser TMachine
 tmParser = do
   states <- sepBy1 stateP (char ',')
-  newline
+  _ <- newline
   alphabet <- many1 symbP
-  newline
+  _ <- newline
   start <- stateP
-  newline
+  _ <- newline
   end <- stateP
-  newline
+  _ <- newline
   transRules <- endBy transP newline
   pure TM {..}
 
@@ -45,11 +43,11 @@ symbP = satisfy (`notElem` " ,<>\n\t")
 transP :: Parser Transition
 transP = do
   fromState <- stateP
-  char ','
+  _ <- char ','
   fromSym <- symbP
-  char ','
+  _ <- char ','
   toState <- stateP
-  char ','
+  _ <- char ','
   toAction <- ALeft <$ char '<' <|> ARight <$ char '>' <|> AWrite <$> symbP
   pure Trans {..}
 

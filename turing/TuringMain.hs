@@ -1,6 +1,6 @@
 {-# LANGUAGE LambdaCase #-}
 
-module Main (main)  where
+module Main (main) where
 
 import System.Environment (getArgs)
 import System.Exit (die)
@@ -34,8 +34,6 @@ simulateTM tm = do
   putStr "input tape: " >> hFlush stdout
   headInp:tailInp <- (++ repeat '_') <$> getLine
   putStrLn "simulating TM ..."
-  printComp $ compute tm (Tape headInp mempty tailInp)
-  where
-    printComp comp = do
-      mapM_ print (fst comp)
-      putStrLn (snd comp)
+  let (cfg, result) = compute tm (Tape headInp mempty tailInp)
+  mapM_ print cfg
+  putStrLn result

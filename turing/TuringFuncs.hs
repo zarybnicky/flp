@@ -4,8 +4,13 @@ module TuringFuncs (compute)  where
 
 import Control.Arrow (first)
 import Data.List (find)
-
 import TuringData
+  ( Action(..)
+  , TMConfig(..)
+  , TMachine(..)
+  , Tape(..)
+  , Transition(..)
+  )
 
 
 -- Výpočet TM je posloupnost konfigurací a výsledek
@@ -35,10 +40,7 @@ step (TMConf _ (Tape _ _ [])) _ =
 -- Vyhledání pravidla v seznamu
 findRule :: TMConfig -> [Transition] -> Either String Transition
 findRule (TMConf q (Tape x _ _)) =
-  maybeToEither "no transition" . find (\(Trans u c _ _) -> q == u && x == c)
-
-maybeToEither :: e -> Maybe a -> Either e a
-maybeToEither e = maybe (Left e) Right
+  maybe (Left "no transition") Right . find (\(Trans u c _ _) -> q == u && x == c)
 
 -- Pomocná funkce; obdoba iterate, ale výsledek může být konečný seznam
 -- Opakovaně aplikuje funkci na počáteční hodnotu
