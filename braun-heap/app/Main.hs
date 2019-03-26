@@ -37,7 +37,7 @@ cmd input
   | "print" == input = liftIO . putStrLn . prettyShow =<< get
   | "size" == input = liftIO . print . sizeSome =<< get
   | "extract" == input = extract
-  | "add " `isPrefixOf` input = add (drop 5 input)
+  | "add " `isPrefixOf` input = add (drop 4 input)
   | otherwise = liftIO $ putStrLn ("Invalid input: " <> input)
 
 extract :: Repl ()
