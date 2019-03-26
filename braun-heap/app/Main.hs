@@ -50,7 +50,7 @@ cmd input
 completer :: Monad m => WordCompleter m
 completer n = return $ filter (isPrefixOf n) names
   where
-    names = ["print", "push", "pop", "size"]
+    names = ["push", "pop", "size", "print", "help"]
 
 help :: HaskelineT (StateT (SomeHeap Int) IO) ()
 help = liftIO . putStrLn . unlines $
