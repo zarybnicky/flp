@@ -8,8 +8,8 @@ import Data.List (isPrefixOf)
 import BraunHeap
   ( Heap(Empty)
   , SomeHeap(..)
-  , insertSome
-  , popSome
+  , addSome
+  , extractSome
   , prettyShow
   , sizeSome
   )
@@ -38,7 +38,7 @@ cmd input
   | "size" == input = get >>= liftIO . print . sizeSome
   | "extract" == input = do
       s <- get
-      case popSome s of
+      case extractSome s of
         Nothing -> liftIO $ putStrLn "Heap is already empty"
         Just (n, heap) -> do
           put heap
@@ -47,7 +47,7 @@ cmd input
       case readMaybe (drop 5 input) of
         Nothing -> liftIO $ putStrLn ("Invalid input: " <> drop 5 input)
         Just n -> do
-          modify (insertSome n)
+          modify (addSome n)
           get >>= \h -> liftIO . putStrLn $ "New size: " <> show (sizeSome h)
   | otherwise =
       liftIO $ putStrLn ("Invalid input: " <> input)
