@@ -9,7 +9,7 @@ import BraunHeap
   ( Heap(Empty)
   , SomeHeap(..)
   , addSome
-  , extractSome
+  , popSome
   , prettyShow
   , sizeSome
   )
@@ -33,17 +33,17 @@ main =
 
 cmd :: String -> Repl ()
 cmd input
-  | "help" == input = help
+  | "add " `isPrefixOf` input = add (drop 4 input)
+  | "pop" == input = pop
   | "print" == input = liftIO . putStrLn . prettyShow =<< get
   | "size" == input = liftIO . print . sizeSome =<< get
-  | "extract" == input = extract
-  | "add " `isPrefixOf` input = add (drop 4 input)
+  | "help" == input = help
   | otherwise = liftIO $ putStrLn ("Invalid input: " <> input)
 
-extract :: Repl ()
-extract = do
+pop :: Repl ()
+pop = do
   s <- get
-  case extractSome s of
+  case popSome s of
     Nothing -> liftIO $ putStrLn "Heap is already empty"
     Just (n, heap) -> do
       put heap
@@ -66,7 +66,7 @@ colonCmd =
 completer :: Monad m => WordCompleter m
 completer n = return $ filter (isPrefixOf n) cmds
   where
-    cmds = ["add", "extract", "size", "print", "help"]
+    cmds = ["add", "pop", "print", "size", "help"]
 
 banner :: Repl ()
 banner =
@@ -75,7 +75,7 @@ banner =
   , ""
   , "A simple CLI for manipulating an integer Braun heap with type-level constraints on subtrees"
   , ""
-  , "Available commands: help, add, extract, size, print"
+  , "Available commands: add, pop, print, size, help"
   ]
 
 help :: Repl ()
@@ -83,10 +83,10 @@ help =
   liftIO . putStrLn . unlines $
   [ "Available commands:"
   , ""
-  , "print   - pretty-print current state of the heap"
-  , "size    - print current size of the heap"
-  , "add N   - insert a single number into the heap"
-  , "extract - remove a single number from the heap"
-  , ":quit   - Quit the REPL"
-  , ":help   - This text"
+  , "print - pretty-print current state of the heap"
+  , "size  - print current size of the heap"
+  , "add N - insert a single number into the heap"
+  , "pop   - remove a single number from the heap"
+  , ":quit - Quit the REPL"
+  , ":help - This text"
   ]

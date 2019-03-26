@@ -35,14 +35,14 @@ module BraunHeap
   , empty
   , singleton
   , add
-  , extract
+  , pop
   , merge
   , mergeEven
   , mergeLeaning
   -- * Manipulating a wrapped heap
   , SomeHeap(SomeHeap)
   , addSome
-  , extractSome
+  , popSome
   , sizeSome
   , toHeap
   -- * Reexports
@@ -162,7 +162,12 @@ mergeLeaning l@(Node lo ll lx lr) r@(Node _ rl ly rr)
 mergeLeaning h Empty = h
 mergeLeaning Empty h = h
 
--- | Extract a the smallest element from the heap. Also used in 'mergeEven' and
+-- | Pop the smallest element of a non-empty heap (as evidenced by the types).
+pop :: Ord a => Heap (1 + n) a -> (a, Heap n a)
+pop Empty = absurd undefined -- Empty != Heap (1 + n) a
+pop (Node o l y r) = (y, merge o l r)
+
+-- | Extract an element from the heap. Also used in 'mergeEven' and
 -- 'mergeLeaning'.
 extract :: Heap (1 + n) a -> (a, Heap n a)
 extract Empty = absurd undefined -- Empty != Heap (1 + n) a
@@ -188,7 +193,14 @@ replaceMin a (Node o l@(Node _ _ lx _) _ r@(Node _ _ rx _))
 addSome :: Ord a => a -> SomeHeap a -> SomeHeap a
 addSome x (SomeHeap h) = SomeHeap (add x h)
 
--- | Pop an element from 'SomeHeap', returing a Maybe
+-- | Pop the smallest element from 'SomeHeap', returing a Maybe
+popSome :: Ord a => SomeHeap a -> Maybe (a, SomeHeap a)
+popSome (SomeHeap Empty) = Nothing
+popSome (SomeHeap h@Node {}) =
+  let (x, h') = pop h
+  in Just (x, SomeHeap h')
+
+-- | Extract an element from 'SomeHeap', returing a Maybe
 extractSome :: SomeHeap a -> Maybe (a, SomeHeap a)
 extractSome (SomeHeap Empty) = Nothing
 extractSome (SomeHeap h@Node {}) =
