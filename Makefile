@@ -1,7 +1,7 @@
 build:
-	stack build braun-tree
+	stack build braun-heap
 
 start:
-	stack exec flp-braun-tree
+	stack exec flp-braun-heap
 
 .PHONY: build start
