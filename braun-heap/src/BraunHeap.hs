@@ -15,30 +15,34 @@
 
 -- | Main inspiration: http://toccata.lri.fr/gallery/braun_trees.en.html
 --
--- Compared to that version though, we need to explicitly encode the m + 1 == n || m == n assumption.
+-- Compared to that version though, we need to explicitly encode the @m + 1 == n || m == n@ assumption.
 --
--- I tried many approaches that wouldn't require extra data:
--- - type family IsOffset a b :: Constraint
--- - (If (m == n) m (m + 1) ~ n) => ...
--- - (and others that I can't even remember)
+-- I tried many approaches that wouldn't require extra data like the 'Offset'
+-- datatype I ultimately used, but I was unsuccessful:
+--
+-- - @type family IsOffset a b :: Constraint where ...@
+-- - @(If (m == n) m (m + 1) ~ n) => ...@
 --
 -- Maybe we'd need to encode even more assumptions into the Node constructor to
 -- do that, but the 'Offset' hack works for now.
 --
--- Still, I'd like to add lemmas like 1 <= 1 + (n :: Nat), otherwise there are
--- lines like `extract Empty = absurd undefined`
+-- Still, I'd like to add lemmas like @1 <= 1 + (n :: Nat)@, otherwise there are
+-- lines like @extract Empty = absurd undefined@
 
 module BraunHeap
   (
-  -- * Manipulating with a raw heap
-    Heap(..)
+  -- * Manipulating a raw heap
+    Heap(Empty, Node)
+  , Offset(Even, Leaning)
   , empty
   , singleton
   , insert
   , merge
+  , mergeEven
+  , mergeLeaning
   , pop
-  -- * Manipulating with a wrapped heap
-  , SomeHeap(..)
+  -- * Manipulating a wrapped heap
+  , SomeHeap(SomeHeap)
   , insertSome
   , popSome
   , sizeSome
@@ -94,6 +98,15 @@ instance Pretty a => Pretty (SomeHeap a) where
 
 -- | Offset of a tree node. There are only two options, the subtrees can be
 -- equal-sized, or the left one can have one element more.
+--
+-- I'd like to write a @nextOffset@ function, but didn't find the necessary trick.
+--
+-- @
+-- nextOffset :: forall m n. Offset m n -> If (m == n) (Offset (1 + m) m) (Offset m m)
+-- nextOffset Even = Leaning :: Offset (1 + m) m
+-- nextOffset Leaning = Even :: Offset m m
+-- @
+
 data Offset m n where
   Even :: Offset n n
   Leaning :: Offset (1 + n) n
@@ -103,11 +116,6 @@ deriving instance Show (Offset m n)
 instance Pretty (Offset m n) where
   pPrint = text . show
 
-
--- What I'd like to write.
--- nextOffset :: forall m n. Offset m n -> If (m == n) (Offset (1 + m) m) (Offset m m)
--- nextOffset Even = Leaning :: Offset (1 + m) m
--- nextOffset Leaning = Even :: Offset m m
 
 -- | An empty heap
 empty :: Heap 0 a
@@ -140,7 +148,7 @@ merge :: Ord a => Offset m n -> Heap m a -> Heap n a -> Heap (m + n) a
 merge Even = mergeEven
 merge Leaning = mergeLeaning
 
--- | Merge two same-sized Braun heaps.
+-- | Merge two equal-sized Braun heaps.
 mergeEven :: Ord a => Heap n a -> Heap n a -> Heap (n + n) a
 mergeEven l@(Node lo ll lx lr) r@(Node _ _ ly _)
   | lx <= ly = Node Leaning r lx (merge lo ll lr)
@@ -193,12 +201,6 @@ popSome (SomeHeap h@Node {}) =
   let (x, h') = pop h
    in Just (x, SomeHeap h')
 
-extractSome :: SomeHeap a -> Maybe (a, SomeHeap a)
-extractSome (SomeHeap Empty) = Nothing
-extractSome (SomeHeap h@Node {}) =
-  let (x, h') = extract h
-   in Just (x, SomeHeap h')
-
 -- | Get the size of 'SomeHeap'
 sizeSome :: SomeHeap a -> Integer
 sizeSome (SomeHeap (_ :: Heap n a)) = natVal (Proxy @n)
@@ -206,3 +208,9 @@ sizeSome (SomeHeap (_ :: Heap n a)) = natVal (Proxy @n)
 -- | Convert a 'Foldable' container into 'SomeHeap'
 toHeap :: (Foldable f, Ord a) => f a -> SomeHeap a
 toHeap = foldl' (\(SomeHeap h) x -> SomeHeap (insert x h)) (SomeHeap Empty)
+
+extractSome :: SomeHeap a -> Maybe (a, SomeHeap a)
+extractSome (SomeHeap Empty) = Nothing
+extractSome (SomeHeap h@Node {}) =
+  let (x, h') = extract h
+   in Just (x, SomeHeap h')
