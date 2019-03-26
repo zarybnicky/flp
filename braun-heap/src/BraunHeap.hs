@@ -34,15 +34,15 @@ module BraunHeap
   , Offset(Even, Leaning)
   , empty
   , singleton
-  , insert
+  , add
+  , extract
   , merge
   , mergeEven
   , mergeLeaning
-  , pop
   -- * Manipulating a wrapped heap
   , SomeHeap(SomeHeap)
-  , insertSome
-  , popSome
+  , addSome
+  , extractSome
   , sizeSome
   , toHeap
   -- * Reexports
@@ -123,22 +123,17 @@ empty = Empty
 singleton :: a -> Heap 1 a
 singleton x = Node Even Empty x Empty
 
--- | Insert an element into a heap, returning a one-element larger heap (as
+-- | Add an element into a heap, returning a one-element larger heap (as
 -- evidenced by the types).
-insert :: Ord a => a -> Heap n a -> Heap (1 + n) a
-insert x Empty = Node Even Empty x Empty
-insert x (Node o l y r)
-  | x <= y = Node n (insert y r) x l
-  | otherwise = Node n (insert x r) y l
+add :: Ord a => a -> Heap n a -> Heap (1 + n) a
+add x Empty = Node Even Empty x Empty
+add x (Node o l y r)
+  | x <= y = Node n (add y r) x l
+  | otherwise = Node n (add x r) y l
   where
     n = case o of
       Leaning -> Even
       Even -> Leaning
-
--- | Pop the smallest element of a non-empty heap (as evidenced by the types).
-pop :: Ord a => Heap (1 + n) a -> (a, Heap n a)
-pop Empty = absurd undefined -- Empty != Heap (1 + n) a
-pop (Node o l y r) = (y, merge o l r)
 
 -- | Merge two heaps, possible with different sizes as evidenced by the 'Offset'
 -- argument.
@@ -167,7 +162,8 @@ mergeLeaning l@(Node lo ll lx lr) r@(Node _ rl ly rr)
 mergeLeaning h Empty = h
 mergeLeaning Empty h = h
 
--- | Extract a single element from the heap. Used in 'mergeEven' and 'mergeLeaning'.
+-- | Extract a the smallest element from the heap. Also used in 'mergeEven' and
+-- 'mergeLeaning'.
 extract :: Heap (1 + n) a -> (a, Heap n a)
 extract Empty = absurd undefined -- Empty != Heap (1 + n) a
 extract (Node Even l y r) = case l of
@@ -188,15 +184,15 @@ replaceMin a (Node o l@(Node _ _ lx _) _ r@(Node _ _ rx _))
   | rx <= lx = Node o (replaceMin a l) lx r
   | otherwise = Node o l rx (replaceMin a r)
 
--- | Insert an element into 'SomeHeap'
-insertSome :: Ord a => a -> SomeHeap a -> SomeHeap a
-insertSome x (SomeHeap h) = SomeHeap (insert x h)
+-- | Add an element into 'SomeHeap'
+addSome :: Ord a => a -> SomeHeap a -> SomeHeap a
+addSome x (SomeHeap h) = SomeHeap (add x h)
 
 -- | Pop an element from 'SomeHeap', returing a Maybe
-popSome :: Ord a => SomeHeap a -> Maybe (a, SomeHeap a)
-popSome (SomeHeap Empty) = Nothing
-popSome (SomeHeap h@Node {}) =
-  let (x, h') = pop h
+extractSome :: SomeHeap a -> Maybe (a, SomeHeap a)
+extractSome (SomeHeap Empty) = Nothing
+extractSome (SomeHeap h@Node {}) =
+  let (x, h') = extract h
    in Just (x, SomeHeap h')
 
 -- | Get the size of 'SomeHeap'
@@ -205,10 +201,4 @@ sizeSome (SomeHeap (_ :: Heap n a)) = natVal (Proxy @n)
 
 -- | Convert a 'Foldable' container into 'SomeHeap'
 toHeap :: (Foldable f, Ord a) => f a -> SomeHeap a
-toHeap = foldl' (\(SomeHeap h) x -> SomeHeap (insert x h)) (SomeHeap Empty)
-
-extractSome :: SomeHeap a -> Maybe (a, SomeHeap a)
-extractSome (SomeHeap Empty) = Nothing
-extractSome (SomeHeap h@Node {}) =
-  let (x, h') = extract h
-   in Just (x, SomeHeap h')
+toHeap = foldl' (\(SomeHeap h) x -> SomeHeap (add x h)) (SomeHeap Empty)
