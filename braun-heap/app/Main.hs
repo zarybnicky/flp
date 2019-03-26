@@ -34,26 +34,34 @@ main =
 cmd :: String -> Repl ()
 cmd input
   | "help" == input = help
-  | "print" == input = get >>= liftIO . putStrLn . prettyShow
-  | "size" == input = get >>= liftIO . print . sizeSome
-  | "extract" == input = do
-      s <- get
-      case extractSome s of
-        Nothing -> liftIO $ putStrLn "Heap is already empty"
-        Just (n, heap) -> do
-          put heap
-          liftIO . putStrLn $ show n <> "\nNew size: " <> show (sizeSome heap)
-  | "add " `isPrefixOf` input =
-      case readMaybe (drop 5 input) of
-        Nothing -> liftIO $ putStrLn ("Invalid input: " <> drop 5 input)
-        Just n -> do
-          modify (addSome n)
-          get >>= \h -> liftIO . putStrLn $ "New size: " <> show (sizeSome h)
-  | otherwise =
-      liftIO $ putStrLn ("Invalid input: " <> input)
+  | "print" == input = liftIO . putStrLn . prettyShow =<< get
+  | "size" == input = liftIO . print . sizeSome =<< get
+  | "extract" == input = extract
+  | "add " `isPrefixOf` input = add (drop 5 input)
+  | otherwise = liftIO $ putStrLn ("Invalid input: " <> input)
+
+extract :: Repl ()
+extract = do
+  s <- get
+  case extractSome s of
+    Nothing -> liftIO $ putStrLn "Heap is already empty"
+    Just (n, heap) -> do
+      put heap
+      liftIO $ putStrLn (show n <> "\nNew size: " <> show (sizeSome heap))
+
+add :: String -> Repl ()
+add input =
+  case readMaybe input of
+    Nothing -> liftIO $ putStrLn ("Invalid input: " <> input)
+    Just n -> do
+      modify (addSome n)
+      liftIO . putStrLn . ("New size: " <>) . show . sizeSome =<< get
 
 colonCmd :: [(String, [String] -> Repl ())]
-colonCmd = [("help", const help), ("quit", const $ liftIO exitSuccess)]
+colonCmd =
+  [ ("help", const help)
+  , ("quit", const $ liftIO exitSuccess)
+  ]
 
 completer :: Monad m => WordCompleter m
 completer n = return $ filter (isPrefixOf n) cmds
