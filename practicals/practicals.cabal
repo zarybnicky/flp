@@ -22,13 +22,4 @@ library
   import: ghc-opts
   hs-source-dirs:      src
   exposed-modules:     Lib
-  build-depends:       base >=4.11 && <4.12
---                      , ghc-typelits-knownnat
---                      , ghc-typelits-natnormalise
-
--- executable flp-binary-heap
---   import: ghc-opts
---   hs-source-dirs:      app
---   main-is:             Main.hs
---   build-depends:       base >=4.11 && <4.12
---                      , practicals
+  build-depends:       base >=4.11 && <4.13

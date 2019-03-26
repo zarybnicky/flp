@@ -1,4 +1,4 @@
 (import ./. {}).shellFor {
-  packages = p: [ p.binary-heap p.turing ];
+  packages = p: [ p.braun-heap p.turing ];
   withHoogle = true;
 }

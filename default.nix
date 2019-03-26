@@ -1,4 +1,5 @@
 { pkgs ? import <nixpkgs> {} }:
 pkgs.haskellPackages.extend (pkgs.haskell.lib.packageSourceOverrides {
-  binary-heap = ./binary-heap;
+  braun-heap = ./braun-heap;
+  turing = ./turing;
 })

@@ -1,5 +1,3 @@
 write-ghc-environment-files: never
 
-packages: binary-heap/
-          practicals/
-          turing/
+optional-packages: *
