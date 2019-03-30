@@ -27,7 +27,7 @@
 -- Still, I'd like to add lemmas like @1 <= 1 + (n :: Nat)@, otherwise there are
 -- lines like @extract Empty = absurd undefined@
 
-module BraunHeap
+module BraunHeap.TypeLits
   (
   -- * Manipulating a raw heap
     Heap(Empty, Node)

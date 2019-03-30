@@ -1,0 +1,3 @@
+packages: .
+          ../braun-heap-typelits
+          ../diagrams-reflex

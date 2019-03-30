@@ -1,0 +1,26 @@
+cabal-version:       2.2
+name:                braun-heap-singletons
+version:             0.1.0.0
+license:             BSD-3-Clause
+author:              Jakub Zárybnický
+maintainer:          jakub@zarybnicky.com
+build-type:          Simple
+
+library
+  default-language:    Haskell2010
+  ghc-options:        -Wall
+                      -Wcompat
+                      -Wincomplete-uni-patterns
+                      -Wincomplete-record-updates
+                      -Wredundant-constraints
+                      -Wmonomorphism-restriction
+                      -fwarn-tabs
+                      -O2
+                      -fdiagnostics-color=never
+
+  hs-source-dirs:      src
+  exposed-modules:     BraunHeap.Singletons
+  build-depends:       base >=4.11 && <4.12
+                     , pretty
+                     , pretty-show
+                     , singletons

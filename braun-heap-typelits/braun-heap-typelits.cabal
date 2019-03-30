@@ -1,12 +1,12 @@
 cabal-version:       2.2
-name:                braun-heap
+name:                braun-heap-typelits
 version:             0.1.0.0
 license:             BSD-3-Clause
 author:              Jakub Zárybnický
 maintainer:          jakub@zarybnicky.com
 build-type:          Simple
 
-common ghc-opts
+library
   default-language:    Haskell2010
   ghc-options:        -Wall
                       -Wcompat
@@ -18,21 +18,10 @@ common ghc-opts
                       -O2
                       -fdiagnostics-color=never
 
-library
-  import: ghc-opts
   hs-source-dirs:      src
-  exposed-modules:     BraunHeap
+  exposed-modules:     BraunHeap.TypeLits
   build-depends:       base >=4.11 && <4.12
                      , ghc-typelits-knownnat
                      , ghc-typelits-natnormalise
                      , pretty
                      , pretty-show
-
-executable flp-braun-heap
-  import: ghc-opts
-  hs-source-dirs:      app
-  main-is:             Main.hs
-  build-depends:       base >=4.11 && <4.12
-                     , braun-heap
-                     , mtl
-                     , repline
