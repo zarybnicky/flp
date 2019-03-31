@@ -11,25 +11,16 @@
 
   overrides = with pkgs.haskell.lib; self: super: {
     braun-heap-gui = overrideCabal super.braun-heap-gui (drv: {
-      postFixup = ''
-        if [ ! -e $out/bin/braun-heap-gui.jsexe ]; then
-          echo "GHC only build? Not compressing JS"
-          exit 0
-        fi
-        pushd $out/bin/braun-heap-gui.jsexe
-        mv all.js all.unminified.js
-        ${pkgs.closurecompiler}/bin/closure-compiler \
-          all.unminified.js \
-          -O ADVANCED \
-          --externs=all.js.externs \
-          --jscomp_off=checkVars \
-          --create_source_map="all.js.map" \
-          --source_map_format=V3 \
-          > all.js
-        echo "//# sourceMappingURL=all.js.map" >> all.js
-        cp ${./static}/* .
-        popd
-      '';
+      enableSharedExecutables = false;
+      enableSharedLibraries = false;
+      configureFlags = [
+        "--ghc-option=-optl=-static"
+        "--ghc-option=-optl=-pthread"
+        "--ghc-option=-optl=-L${pkgs.gmp6.override { withStatic = true; }}/lib"
+        "--ghc-option=-optl=-L${pkgs.zlib.static}/lib"
+        "--ghc-option=-optl=-L${pkgs.glibc.static}/lib"
+        "--ghc-option=-optl=-L${pkgs.ncurses.override { enableStatic = true; }}/lib"
+      ];
     });
   };
 })
