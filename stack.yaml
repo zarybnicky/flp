@@ -1,6 +1,6 @@
 resolver: lts-12.26
 
 packages:
-- braun-heap
+- braun-heap-typelits
 - braun-heap-cli
 - turing

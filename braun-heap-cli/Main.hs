@@ -5,7 +5,7 @@ module Main
 import Control.Monad.IO.Class (liftIO)
 import Control.Monad.State.Strict (StateT, evalStateT, get, modify, put)
 import Data.List (isPrefixOf)
-import BraunHeap
+import BraunHeap.TypeLits
   ( Heap(Empty)
   , SomeHeap(..)
   , addSome
@@ -32,13 +32,13 @@ main =
     (SomeHeap Empty)
 
 cmd :: String -> Repl ()
-cmd input
-  | "add " `isPrefixOf` input = add (drop 4 input)
-  | "pop" == input = pop
-  | "print" == input = liftIO . putStrLn . prettyShow =<< get
-  | "size" == input = liftIO . print . sizeSome =<< get
-  | "help" == input = help
-  | otherwise = liftIO $ putStrLn ("Invalid input: " <> input)
+cmd input = case filter (not . null) (words input) of
+  "add":xs -> mapM_ add xs
+  ["pop"] -> pop
+  ["print"] -> liftIO . putStrLn . prettyShow =<< get
+  ["size"] -> liftIO . print . sizeSome =<< get
+  ["help"] -> help
+  _ -> liftIO $ putStrLn ("Invalid input: " <> input)
 
 pop :: Repl ()
 pop = do
@@ -83,10 +83,10 @@ help =
   liftIO . putStrLn . unlines $
   [ "Available commands:"
   , ""
-  , "print - pretty-print current state of the heap"
-  , "size  - print current size of the heap"
-  , "add N - insert a single number into the heap"
-  , "pop   - remove a single number from the heap"
-  , ":quit - Quit the REPL"
-  , ":help - This text"
+  , "print          - pretty-print current state of the heap"
+  , "size           - print current size of the heap"
+  , "add X [Y Z...] - insert a list of numbers into the heap"
+  , "pop            - remove a single number from the heap"
+  , ":quit          - Quit the REPL"
+  , ":help          - This text"
   ]

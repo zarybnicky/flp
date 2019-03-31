@@ -20,6 +20,6 @@ executable flp-braun-heap
 
   main-is:             Main.hs
   build-depends:       base >=4.11 && <4.12
-                     , braun-heap
+                     , braun-heap-typelits
                      , mtl
                      , repline

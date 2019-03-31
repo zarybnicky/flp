@@ -1,6 +1,6 @@
 write-ghc-environment-files: never
 
-packages: braun-heap
+packages: braun-heap-typelits
           braun-heap-cli
           turing
           practicals
