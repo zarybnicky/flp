@@ -60,9 +60,9 @@ commits (though I should have), so this assumes that your `nixpkgs` has the
 `haskell.packages.ghc844` attribute.
 
 ```shell
-$ nix-build -A braun-heap
+$ nix-build -A braun-heap-typelits
 ...
-/nix/store/8xvjgs72pfklvgwmqkidyw04bpijq60l-braun-heap-0.1.0.0
+/nix/store/8xvjgs72pfklvgwmqkidyw04bpijq60l-braun-heap-typelits-0.1.0.0
 
 $ result/bin/flp-braun-heap
 Braun Heap
@@ -81,9 +81,9 @@ derivation. To build them directly, run `nix-build -A braun-heap.doc`.
 A `stack.yaml` is prepared as well, so the usual [Stack](https://docs.haskellstack.org/en/stable/README/) command should work as well.
 
 ```
-$ stack build braun-heap
+$ stack build braun-heap-typelits
 ...
-Registering library for braun-heap-0.1.0.0..
+Registering library for braun-heap-typelits-0.1.0.0..
 
 $ stack exec flp-braun-heap
 Braun Heap
@@ -96,3 +96,27 @@ Available commands: help, add, extract, size, print
 ```
 
 Haddocks are available as well, with the command `stack build --haddock --open braun-heap`.
+
+### GUI
+
+There is a simple Web GUI in the subdirectory `braun-heap-gui`, written using
+the Reflex-DOM library using the `reflex-platform` scaffolding.
+
+It uses the library `diagrams` to render the heap into a SVG tree and
+dynamically redraws it responding to the user input, using the library
+`reflex-dom`.
+
+I was unable to compile the executable using GHCJS as Core plugins are not
+supported there and there are some compilation problems with `singletons` that I
+lacked the time to solve (`singletons` reportedly works on GHCJS, but it may
+have been some recent `reflex-platform` change that broke it...).
+
+Instead of fighting with the compiler, I prepared a statically linked
+executable, bundled at the root of this repository, which starts a web server on
+port 3000 (http://localhost:3000) with the application. The library used,
+`jsaddle-warp`, opens a Websocket connection between the browser and server and
+runs all program logic on the server, with the browser serving only as a command
+interpreter.
+
+A note of caution: the bundled executable is statically linked using glibc and
+not musl, so there may be ABI incompatibilites...
