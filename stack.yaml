@@ -3,4 +3,4 @@ resolver: lts-12.26
 packages:
 - braun-heap-typelits
 - braun-heap-cli
-- turing
+- turing-haskell
