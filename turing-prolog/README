@@ -1,0 +1,25 @@
+Turing machine
+--------------
+
+FLP 2019, FIT VUT Brno
+Jakub Zárybnický <xzaryb00@stud.fit.vutbr.cz>
+
+This project is a simple implementation of a Turing machine in Prolog.
+
+The selected representation of the machine is a character as its current state,
+and a zipper of characters for its tape, represented as a triple (L, C, R),
+where L is a list of characters in reverse order, starting with the character
+immediately to the left of C, C is a single character, and R is a list of
+characters in normal order.
+
+The rules are loaded into the Prolog interpreter's internal database using the
+assertz/1 predicate, and then interpreted by simply calling the dynamic
+predicate rule/4.
+
+To compile and run:
+> make
+> ./flp19-log < input.txt
+
+To run the included suite of tests:
+> make
+> make test
