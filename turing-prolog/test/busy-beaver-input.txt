@@ -1,0 +1,19 @@
+S   A l
+S o S  
+S l B L
+A l B R
+B   C l
+B o S  
+B l D  
+C l S L
+D   E L
+E   F l
+E o S  
+E l H L
+G   S R
+H   J l
+H o S  
+H l K  
+J l H R
+K   S R
+

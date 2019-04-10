@@ -1,0 +1,186 @@
+S 
+Al
+lB 
+lCl
+Sll
+B ll
+Clll
+S lll
+Allll
+lBlll
+lD ll
+El ll
+H l ll
+Jll ll
+lHl ll
+lK  ll
+l S ll
+l Alll
+l lBll
+l lD l
+l El l
+lH l l
+lJll l
+llHl l
+llK  l
+ll S l
+ll All
+ll lBl
+ll lD 
+ll El 
+llH l 
+llJll 
+lllHl 
+lllK  
+lll S 
+lll Al
+lll lB 
+lll lCl
+lll Sll
+lllB ll
+lllClll
+llSllll
+lBlllll
+lD llll
+El llll
+H l llll
+Jll llll
+lHl llll
+lK  llll
+l S llll
+l Alllll
+l lBllll
+l lD lll
+l El lll
+lH l lll
+lJll lll
+llHl lll
+llK  lll
+ll S lll
+ll Allll
+ll lBlll
+ll lD ll
+ll El ll
+llH l ll
+llJll ll
+lllHl ll
+lllK  ll
+lll S ll
+lll Alll
+lll lBll
+lll lD l
+lll El l
+lllH l l
+lllJll l
+llllHl l
+llllK  l
+llll S l
+llll All
+llll lBl
+llll lD 
+llll El 
+llllH l 
+llllJll 
+lllllHl 
+lllllK  
+lllll S 
+lllll Al
+lllll lB 
+lllll lCl
+lllll Sll
+lllllB ll
+lllllClll
+llllSllll
+lllBlllll
+lllD llll
+llEl llll
+lHll llll
+lK l llll
+l Sl llll
+lB l llll
+lCll llll
+Slll llll
+B lll llll
+Cllll llll
+S llll llll
+Alllll llll
+lBllll llll
+lD lll llll
+El lll llll
+H l lll llll
+Jll lll llll
+lHl lll llll
+lK  lll llll
+l S lll llll
+l Allll llll
+l lBlll llll
+l lD ll llll
+l El ll llll
+lH l ll llll
+lJll ll llll
+llHl ll llll
+llK  ll llll
+ll S ll llll
+ll Alll llll
+ll lBll llll
+ll lD l llll
+ll El l llll
+llH l l llll
+llJll l llll
+lllHl l llll
+lllK  l llll
+lll S l llll
+lll All llll
+lll lBl llll
+lll lD  llll
+lll El  llll
+lllH l  llll
+lllJll  llll
+llllHl  llll
+llllK   llll
+llll S  llll
+llll Al llll
+llll lB llll
+llll lClllll
+llll Sllllll
+llllB llllll
+llllClllllll
+lllSllllllll
+llBlllllllll
+llD llllllll
+lEl llllllll
+Hll llllllll
+K l llllllll
+ Sl llllllll
+B l llllllll
+Cll llllllll
+S ll llllllll
+Alll llllllll
+lBll llllllll
+lD l llllllll
+El l llllllll
+H l l llllllll
+Jll l llllllll
+lHl l llllllll
+lK  l llllllll
+l S l llllllll
+l All llllllll
+l lBl llllllll
+l lD  llllllll
+l El  llllllll
+lH l  llllllll
+lJll  llllllll
+llHl  llllllll
+llK   llllllll
+ll S  llllllll
+ll Al llllllll
+ll lB llllllll
+ll lClllllllll
+ll Sllllllllll
+llB llllllllll
+llClllllllllll
+lSllllllllllll
+Blllllllllllll
+D llllllllllll
+E  llllllllllll
+Fl llllllllllll

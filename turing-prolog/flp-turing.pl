@@ -7,7 +7,8 @@
 % Load a turing machine from stdin, load its rules into database, and run it
 % from state 'S' to state 'F'.
 start :-
-    loadTuring(Rules, [T|Ts]),
+    loadTuring(Rules, Tape),
+    ([T|Ts] = Tape ; T = ' ', Ts = []),
     sortRules(Rules, Sorted),
     maplist(loadRule, Sorted), !,
     step('S', ([], T, Ts), 'F', _),
@@ -56,7 +57,7 @@ loadTuring(Rules, Tape) :-
       isState(S), isSymbol(A), isState(T), (isSymbol(B) ; B == 'L' ; B == 'R'),
       loadTuring(Rs, Tape), Rules = [(S, A, T, B)|Rs]
     ; % Initial tape, final line
-      [_|_] = L, maplist(isSymbol, L),
+      maplist(isSymbol, L),
       Rules = [], Tape = L
     ).
 

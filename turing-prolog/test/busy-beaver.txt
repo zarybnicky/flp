@@ -1,0 +1,49 @@
+Four-state busy beaver
+
+State 0
+Blank	Write ‘1’		State 1	Move tape right
+0		Write ‘Blank’	State 0	None
+1		Write ‘1’		State 1	Move tape left
+State 1
+Blank	Write ‘1’		State 0	Move tape left
+0		Write ‘Blank’	State 0	None
+1		Write ‘Blank’	State 2	Move tape left
+State 2
+Blank	Write ‘1’		Stop State	Move tape right
+0		Write ‘Blank’	State 0	None
+1		Write ‘1’		State 3	Move tape left
+State 3
+Blank	Write ‘1’		State 3	Move tape right
+0		Write ‘Blank’	State 0	None
+1		Write ‘Blank’	State 0	Move tape right
+
+S = 0
+A = helper for S
+B = 1
+C,D = helper for B
+E = 2
+G = helper for E
+H = 3
+J = helper for H
+
+S   A l
+S o S  
+S l B L
+A l B R
+
+B   C l
+B o S  
+B l D  
+C l S L
+D   E L
+
+E   F l
+E o S  
+E l H L
+G   S R
+
+H   J l
+H o S  
+H l K  
+J l H R
+K   S R

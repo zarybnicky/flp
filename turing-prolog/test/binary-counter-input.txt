@@ -1,0 +1,13 @@
+S   A L
+S o S R
+S l S R
+A   B l
+A o C l
+A l D o
+B l E R
+C l E L
+D o A L
+E   F  
+E o E R
+E l E R
+oooll

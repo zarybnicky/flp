@@ -1,0 +1,26 @@
+S   A L
+S o S R
+S l S R
+A   F l
+A o W  
+A l M  
+B   S R
+W   Y L
+Y   Z R
+Y o Y L
+Y l Y L
+Z   B  
+Z o B  
+Z l D l
+M   N L
+N   O R
+N o N L
+N l N L
+O   B  
+O o D o
+O l B  
+D   F o
+D o E  
+D l E  
+E   D R
+loololo
