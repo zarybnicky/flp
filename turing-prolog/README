@@ -6,11 +6,11 @@ Jakub Zárybnický <xzaryb00@stud.fit.vutbr.cz>
 
 This project is a simple implementation of a Turing machine in Prolog.
 
-The selected representation of the machine is a character as its current state,
-and a zipper of characters for its tape, represented as a triple (L, C, R),
-where L is a list of characters in reverse order, starting with the character
-immediately to the left of C, C is a single character, and R is a list of
-characters in normal order.
+The representation of the machine is a character for the current state, and a
+zipper of characters for the tape, represented as a triple (L, C, R) where L is
+a list of characters in reverse order starting with the character immediately to
+the left of C, C is a single character, and R is a list of characters in normal
+order.
 
 The rules are loaded into the Prolog interpreter's internal database using the
 assertz/1 predicate, and then interpreted by simply calling the dynamic
@@ -20,6 +20,20 @@ To compile and run:
 > make
 > ./flp19-log < input.txt
 
-To run the included suite of tests:
-> make
-> make test
+I've also included a suite of test programs (which you can run by executing
+`make test`). Each test consists of two files, '-input.txt' and
+'-output.txt'. These are compared in the 'test/run.sh' script by simple
+invocation of 'diff'.
+
+The test suite includes a few simple programs (from the task assignment and from the
+course forums), and three more complex programs:
+
+- assignment - a machine that searches for 'c'
+- forum-blanks - a machine that searches for 'a'
+- forum-trap - a machine whose rules would cause a cycle if executed in the wrong order
+- palindrome-detector(-true, -false) - a machine that checks if the tape given is
+  a palindrome consisting of 0s and 1s and replacing the input with a 0 or 1
+  in the end (0 = 'o', 1 = 'l')
+- binary-counter - a machine that adds 1 to a binary number
+- busy-beaver - four-state busy beaver machine, encoded using 9 states due to
+  the limitations of the rule specifications (either move or write but not both)
