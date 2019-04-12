@@ -16,7 +16,6 @@ executable flp-braun-heap
                       -Wmonomorphism-restriction
                       -fwarn-tabs
                       -O2
-                      -fdiagnostics-color=never
 
   main-is:             Main.hs
   build-depends:       base >=4.11 && <4.12

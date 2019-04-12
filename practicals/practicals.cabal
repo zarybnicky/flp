@@ -16,7 +16,6 @@ common ghc-opts
                       -Wmonomorphism-restriction
                       -fwarn-tabs
                       -O2
-                      -fdiagnostics-color=never
 
 library
   import: ghc-opts

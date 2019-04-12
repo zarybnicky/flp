@@ -18,7 +18,7 @@ executable braun-heap-gui
                       -Wredundant-constraints
                       -Wmonomorphism-restriction
                       -fwarn-tabs
-                      -fdiagnostics-color=never
+
   if impl(ghcjs -any)
     ghc-options:      -dedupe
     cpp-options:      -DGHCJS_BROWSER

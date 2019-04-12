@@ -16,7 +16,6 @@ library
                       -Wmonomorphism-restriction
                       -fwarn-tabs
                       -O2
-                      -fdiagnostics-color=never
 
   hs-source-dirs:      src
   exposed-modules:     BraunHeap.Singletons
